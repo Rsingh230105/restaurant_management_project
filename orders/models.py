@@ -8,8 +8,8 @@ class OrderStatus(models.Model):
     def __str__(self):
         return self.name
 
-class order(models.Model):
-    status = models.ForeignKey(OrderStatus,on_delete=models.SET_NULL,null=True)
+class Order(models.Model):
+    status = models.ForeignKey(OrderStatus,on_delete=models.SET_NULL,null=True,related_name='orders')
 
     def __str__(self):
         return f"Order {self.id}"
