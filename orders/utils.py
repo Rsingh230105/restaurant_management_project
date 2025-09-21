@@ -14,16 +14,16 @@ def generate_coupon_code(length=10,model=None,field_name="code"):
     """
 
     #Define character (A-Z,a-z,0-9)
-    character = string.ascii_uppercase + string.digits
+    characters = string.ascii_uppercase + string.digits
 
     while True:
         #Random Secure string generated
         coupon_code = "".join(secrets.choice(characters) for _ in range(length))
 
-        #Agar model diya ho to db me check kare
+        #if model is exist
         if model:
-            if not model.objects.filter(**{field_name: coupon_code}).exist():
+            if not model.objects.filter(**{field_name: coupon_code}).exists():
                 return coupon_code
         else:
-            # Model nahi diya hai to bas code return karenge
+            #model is not exist , so return code
             return coupon_code
