@@ -2,7 +2,7 @@ import string
 import secrets
 from .models import OrderStatus #Replace with your Coupon model when you create one
 
-def generate_coupon_code(length=10,model=None,field_name="code"):
+def generate_coupon_code(length=10,model=None,field_name="code",max_attempts=100):
     """
     Generate a unique alphanumeric coupon code.
     Args:
@@ -15,8 +15,10 @@ def generate_coupon_code(length=10,model=None,field_name="code"):
 
     #Define character (A-Z,a-z,0-9)
     characters = string.ascii_uppercase + string.digits
+    attempts=0
 
     while True:
+        attempts +=1
         #Random Secure string generated
         coupon_code = "".join(secrets.choice(characters) for _ in range(length))
 
@@ -27,3 +29,6 @@ def generate_coupon_code(length=10,model=None,field_name="code"):
         else:
             #model is not exist , so return code
             return coupon_code
+        
+        if attempts >=max_attempts:
+            raise ValueError("Unable to generate a unique coupon code after maximum attempts")
