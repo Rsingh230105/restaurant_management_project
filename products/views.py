@@ -13,14 +13,20 @@ NOTE: Conside this as a reference and follow this same coding structure or forma
 
 # Create your views here.
 class ItemView(viewsets.ViewSet):
-    pagination_class = MenuItemPagination
+    """
+    A ViewSet for listing,searching and creating items.
+    Provides:
+    ->list(): Get With optinal search filter
+    ->post() or create(): POST to add a new item
+    """
+        pagination_class = MenuItemPagination
 
-    def get(self, request):
-        items = Items.objects.all()
-        serializer = ItemSerializer(items, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # def get(self, request):
+    #     items = Items.objects.all()
+    #     serializer = ItemSerializer(items, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request):
         serializer = ItemSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -28,6 +34,10 @@ class ItemView(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self,request):
+        """
+        Handle Get  request to list or serach items.
+        otional query parameter: ?search=<name>
+        """
         query = request.query_params.get('search',None)
         if query:
             items = Items.objects.filter(name__icontains=query)
@@ -40,7 +50,7 @@ class ItemView(viewsets.ViewSet):
         return paginator.get_paginated_response(serializer.data)
 
 class MenuItemPagination(PageNumberPagination):
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size=50
+        page_size = 5
+        page_size_query_param = 'page_size'
+        max_page_size=50
 
