@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.pagination import PageNumberPagination
 from .models import Items
 from .serializers import ItemSerializer
@@ -19,12 +18,7 @@ class ItemView(viewsets.ViewSet):
     ->list(): Get With optinal search filter
     ->post() or create(): POST to add a new item
     """
-        pagination_class = MenuItemPagination
-
-    # def get(self, request):
-    #     items = Items.objects.all()
-    #     serializer = ItemSerializer(items, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    pagination_class = MenuItemPagination
 
     def create(self, request):
         serializer = ItemSerializer(data=request.data)
@@ -40,13 +34,13 @@ class ItemView(viewsets.ViewSet):
         """
         query = request.query_params.get('search',None)
         if query:
-            items = Items.objects.filter(name__icontains=query)
+            Items = Items.objects.filter(name__icontains=query)
         else:
-            items = items.objects.all()
+            Items = Items.objects.all()
 
         paginator = self.pagination_class()
-        result_page = paginator.paginate_queryset(menu_items,request)
-        serializer = MenuItemSerializer(result_page,many=True)
+        result_page = paginator.paginate_queryset(Items,request)
+        serializer = ItemSerializer(result_page,many=True)
         return paginator.get_paginated_response(serializer.data)
 
 class MenuItemPagination(PageNumberPagination):
