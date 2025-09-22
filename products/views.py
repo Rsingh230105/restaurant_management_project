@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
-from .models import Item
+from .models import Items
 from .serializers import ItemSerializer
 
 '''
@@ -13,9 +13,10 @@ NOTE: Conside this as a reference and follow this same coding structure or forma
 
 # Create your views here.
 class ItemView(APIView,viewsets.ViewSet):
+    pagination_class = MenuItemPagination
 
     def get(self, request):
-        items = Item.objects.all()
+        items = Items.objects.all()
         serializer = ItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -29,9 +30,14 @@ class ItemView(APIView,viewsets.ViewSet):
     def list(self,request):
         query = request.query_params.get('search',None)
         if query:
-            item = Item.objects.filter(name__icontains=query)
+            items = Items.objects.filter(name__icontains=query)
         else:
-            item = item.objects.all()
+            items = items.objects.all()
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(menu_items,request)
+        serializer = MenuItemSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 class MenuItemPagination(PageNumberPagination):
     page_size = 5
