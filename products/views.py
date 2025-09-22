@@ -43,6 +43,15 @@ class ItemView(viewsets.ViewSet):
         serializer = ItemSerializer(result_page,many=True)
         return paginator.get_paginated_response(serializer.data)
 
+    def update(self,request,pk=None):
+        #Handle PUT requests to update an existing item by Id"
+        item = get_object_or_404(Item,pk=pk)
+        serializer = ItemSerializer(item,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_ok)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 class MenuItemPagination(PageNumberPagination):
         page_size = 5
         page_size_query_param = 'page_size'
