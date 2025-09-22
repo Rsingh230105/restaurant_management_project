@@ -12,7 +12,7 @@ NOTE: Conside this as a reference and follow this same coding structure or forma
 '''
 
 # Create your views here.
-class ItemView(APIView,viewsets.ViewSet):
+class ItemView(viewsets.ViewSet):
     pagination_class = MenuItemPagination
 
     def get(self, request):
